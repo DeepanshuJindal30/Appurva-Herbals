@@ -43,12 +43,12 @@ async function saveProducts(products: Product[]) {
 }
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const id = params.id
+    const { id } = await params
     const updatedData: Product = await request.json()
     const products = await getProducts()
 
@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const id = params.id
+    const { id } = await params
     const products = await getProducts()
 
     const index = products.findIndex((p: Product) => p.id === id)

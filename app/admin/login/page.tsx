@@ -1,9 +1,8 @@
 'use client'
 
-import { Box, Button, Container, Heading, Input, Text, VStack, useToast } from '@chakra-ui/react'
+import { Box, Button, Container, Heading, Input, Text, VStack, useToast, HStack } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Mail } from 'lucide-react'
 
 const AUTHORIZED_EMAILS = ['deepanshujindal907@gmail.com', 'appurvaherbals@gmail.com']
 
@@ -104,7 +103,6 @@ export default function AdminLogin() {
                   isDisabled={loading}
                   size="lg"
                   borderRadius="12px"
-                  leftIcon={<Mail size={18} />}
                 />
               </Box>
               <Button
