@@ -66,35 +66,35 @@ export default function Page() {
 
       <Box as="main">
         <Box bg="radial-gradient(circle at 18% 16%, rgba(211, 167, 53, .30), transparent 28%), radial-gradient(circle at 92% 10%, rgba(47, 123, 89, .24), transparent 30%), linear-gradient(135deg, #fffaf0 0%, #edf5eb 100%)" borderBottomWidth="1px" borderColor="blackAlpha.100">
-          <Container maxW="7xl" pt={{ base: 9, md: 14 }} pb={{ base: 10, md: 16 }}>
+          <Container maxW="7xl" pt={{ base: 6, md: 14 }} pb={{ base: 8, md: 16 }}>
             <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={{ base: 8, lg: 12 }} alignItems="center">
               <Box>
-                <Badge bg="white" color="#103d2b" borderWidth="1px" borderColor="green.100" borderRadius="full" px={4} py={2} boxShadow="sm">
+                <Badge bg="white" color="#103d2b" borderWidth="1px" borderColor="green.100" borderRadius="full" px={3} py={1.5} boxShadow="sm" fontSize={{ base: 'xs', md: 'sm' }}>
                   Doctor-ready herbal product catalogue
                 </Badge>
-                <Heading as="h1" mt={5} fontSize={{ base: '42px', md: '68px' }} lineHeight=".98" maxW="840px" letterSpacing="0">
+                <Heading as="h1" mt={4} fontSize={{ base: '32px', sm: '48px', md: '68px' }} lineHeight={{ base: '1.1', md: '.98' }} maxW="840px" letterSpacing="0">
                   Appurva Herbals products, ready for clinical conversations.
                 </Heading>
-                <Text mt={5} fontSize={{ base: 'md', md: 'xl' }} color="gray.700" maxW="740px">
+                <Text mt={4} fontSize={{ base: 'sm', md: 'xl' }} color="gray.700" maxW="740px" lineHeight={{ base: '1.5', md: '1.6' }}>
                   Browse product photos, care categories, pack sizes, positioning and enquiry actions in a polished offline catalogue built for doctors, clinics and distributors.
                 </Text>
 
-                <Flex mt={7} gap={3} wrap="wrap">
-                  <Button as={Link} href="#catalogue" size="lg" bg="#103d2b" color="white" px={8} leftIcon={<Search size={18} />} _hover={{ bg: '#0b2c20', textDecoration: 'none' }}>
+                <Flex mt={6} gap={2} wrap="wrap" flexDir={{ base: 'column', sm: 'row' }}>
+                  <Button as={Link} href="#catalogue" size={{ base: 'md', md: 'lg' }} bg="#103d2b" color="white" px={{ base: 6, md: 8 }} leftIcon={<Search size={18} />} w={{ base: '100%', sm: 'auto' }} _hover={{ bg: '#0b2c20', textDecoration: 'none' }}>
                     Explore catalogue
                   </Button>
-                  <Button as={Link} href={emailHref('Appurva Herbals Price List Request')} size="lg" variant="outline" borderColor="green.700" color="#103d2b" leftIcon={<Mail size={18} />} _hover={{ bg: 'green.50', textDecoration: 'none' }}>
+                  <Button as={Link} href={emailHref('Appurva Herbals Price List Request')} size={{ base: 'md', md: 'lg' }} variant="outline" borderColor="green.700" color="#103d2b" leftIcon={<Mail size={18} />} w={{ base: '100%', sm: 'auto' }} _hover={{ bg: 'green.50', textDecoration: 'none' }}>
                     Request price list
                   </Button>
-                  <Button as={Link} href={callHref()} size="lg" variant="outline" borderColor="green.700" color="#103d2b" leftIcon={<Phone size={18} />} _hover={{ bg: 'green.50', textDecoration: 'none' }}>
+                  <Button as={Link} href={callHref()} size={{ base: 'md', md: 'lg' }} variant="outline" borderColor="green.700" color="#103d2b" leftIcon={<Phone size={18} />} w={{ base: '100%', sm: 'auto' }} _hover={{ bg: 'green.50', textDecoration: 'none' }}>
                     Call
                   </Button>
                 </Flex>
-                <Text mt={4} color="gray.700" fontWeight="700">
-                  {contact.location} | {contact.phone} | {contact.email}
+                <Text mt={4} color="gray.700" fontWeight="700" fontSize={{ base: 'xs', md: 'sm' }}>
+                  {contact.location} | {contact.phone}
                 </Text>
 
-                <SimpleGrid columns={{ base: 2, md: 4 }} gap={3} mt={9} maxW="780px">
+                <SimpleGrid columns={{ base: 2, md: 4 }} gap={3} mt={8} maxW="780px">
                   <Metric label="Products" value="16" />
                   <Metric label="Care areas" value={`${categories.length - 1}`} />
                   <Metric label="Images" value="Local" />
@@ -102,13 +102,13 @@ export default function Page() {
                 </SimpleGrid>
               </Box>
 
-              <Box minH={{ base: '430px', md: '620px' }} position="relative">
+              <Box minH={{ base: 'auto', md: '620px' }} position="relative" display={{ base: 'none', md: 'block' }}>
                 <HeroPhoto product={featuredProducts[1]} left={{ base: '0', md: '6%' }} top={{ base: '4%', md: '0' }} w={{ base: '58%', md: '52%' }} h={{ base: '330px', md: '470px' }} rotate="-5deg" />
                 <HeroPhoto product={featuredProducts[0]} right={{ base: '0', md: '5%' }} top={{ base: '18%', md: '12%' }} w={{ base: '52%', md: '45%' }} h={{ base: '310px', md: '440px' }} rotate="4deg" />
                 <HeroPhoto product={featuredProducts[2]} left={{ base: '23%', md: '27%' }} bottom={{ base: '0', md: '4%' }} w={{ base: '54%', md: '44%' }} h={{ base: '255px', md: '330px' }} />
                 <Box position="absolute" right={{ base: '3%', md: '0' }} bottom={{ base: '16px', md: '46px' }} bg="white" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="xl" p={4} maxW="310px">
                   <Text fontSize="xs" color="green.700" textTransform="uppercase" fontWeight="900">Search-first workflow</Text>
-                  <Text mt={1} fontWeight="800">Find products by care area, inspect details, then call, WhatsApp or email instantly.</Text>
+                  <Text mt={1} fontWeight="800" fontSize="sm">Find products by care area, inspect details, then call, WhatsApp or email instantly.</Text>
                 </Box>
               </Box>
             </Grid>
@@ -117,31 +117,31 @@ export default function Page() {
 
         <TrustStrip />
 
-        <Box id="catalogue" bg="#fbfaf6" py={{ base: 8, md: 12 }}>
+        <Box id="catalogue" bg="#fbfaf6" py={{ base: 6, md: 12 }}>
           <Container maxW="7xl">
-            <Flex justify="space-between" align={{ base: 'start', md: 'end' }} gap={4} flexDir={{ base: 'column', md: 'row' }} mb={6}>
+            <Flex justify="space-between" align={{ base: 'start', md: 'end' }} gap={4} flexDir={{ base: 'column', md: 'row' }} mb={8}>
               <Box>
-                <Text color="green.700" fontSize="sm" fontWeight="900" textTransform="uppercase">Product catalogue</Text>
-                <Heading size="xl" mt={1}>Find the right product faster</Heading>
-                <Text mt={2} color="gray.600">Search product names, care areas, benefits or pack types.</Text>
+                <Text color="green.700" fontSize={{ base: 'xs', md: 'sm' }} fontWeight="900" textTransform="uppercase">Product catalogue</Text>
+                <Heading size={{ base: 'lg', md: 'xl' }} mt={2}>Find the right product faster</Heading>
+                <Text mt={2} color="gray.600" fontSize={{ base: 'sm', md: 'md' }}>Search product names, care areas, benefits or pack types.</Text>
               </Box>
-              <Badge bg="white" color="#103d2b" borderWidth="1px" borderColor="green.100" borderRadius="full" px={4} py={2}>
+              <Badge bg="white" color="#103d2b" borderWidth="1px" borderColor="green.100" borderRadius="full" px={4} py={2} flexShrink={0}>
                 {filteredProducts.length} visible
               </Badge>
             </Flex>
 
-            <Box position="sticky" top="74px" zIndex={12} bg="rgba(251, 250, 246, .94)" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="lg" p={3} mb={6} backdropFilter="blur(14px)">
-              <Grid templateColumns={{ base: '1fr', lg: '1fr 270px auto' }} gap={3} alignItems="end">
+            <Box position="sticky" top={{ base: '56px', md: '74px' }} zIndex={12} bg="rgba(251, 250, 246, .94)" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="lg" p={4} mb={6} backdropFilter="blur(14px)">
+              <Grid templateColumns={{ base: '1fr', lg: '1fr 270px auto' }} gap={4} alignItems="end">
                 <Box>
                   <Text fontSize="xs" fontWeight="900" color="gray.600" mb={2}>SEARCH</Text>
-                  <Flex bg="white" borderWidth="1px" borderColor="blackAlpha.200" borderRadius="10px" align="center" px={3}>
+                  <Flex bg="white" borderWidth="1px" borderColor="blackAlpha.200" borderRadius="14px" align="center" px={3} py={2}>
                     <Search size={18} color="#5f6f66" />
                     <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Try cough, liver, skin, protein, AP-Zyme..." size="lg" border="0" _focusVisible={{ boxShadow: 'none' }} />
                   </Flex>
                 </Box>
                 <Box>
                   <Text fontSize="xs" fontWeight="900" color="gray.600" mb={2}>CATEGORY</Text>
-                  <Select value={category} onChange={(event) => setCategory(event.target.value)} size="lg" bg="white" borderColor="blackAlpha.200">
+                  <Select value={category} onChange={(event) => setCategory(event.target.value)} size="lg" bg="white" borderColor="blackAlpha.200" borderRadius="14px">
                     {categories.map((item) => (
                       <option key={item} value={item}>{item}</option>
                     ))}
@@ -152,7 +152,7 @@ export default function Page() {
                 </Button>
               </Grid>
 
-              <Flex gap={2} mt={3} overflowX="auto" pb={1}>
+              <Flex gap={2} mt={4} overflowX="auto" pb={2} css={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: '4px' }, '&::-webkit-scrollbar-track': { bg: 'transparent' }, '&::-webkit-scrollbar-thumb': { bg: 'rgba(16, 61, 43, .24)', borderRadius: '999px' } }}>
                 {categories.map((item) => {
                   const categoryProduct = item === 'All' ? null : featuredProducts.find((product) => product.category === item) ?? filterProducts('', item)[0]
                   return (
@@ -164,7 +164,7 @@ export default function Page() {
               </Flex>
             </Box>
 
-            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }} gap={5}>
+            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }} gap={{ base: 4, md: 5 }}>
               {filteredProducts.map((product) => (
                 <ProductCard key={product.name} product={product} onView={() => viewProduct(product)} />
               ))}
@@ -292,16 +292,18 @@ function ProductCard({ product, onView }: { product: Product; onView: () => void
           </Flex>
 
           <Divider my={4} />
-          <Flex align="center" gap={2}>
+          <Flex align="center" gap={3} wrap="wrap" flexDir={{ base: 'column', sm: 'row' }}>
             <Box>
               <Text fontSize="xs" color="gray.500" fontWeight="700">PRICE</Text>
               <Text fontWeight="900">{product.price}</Text>
             </Box>
-            <IconButton as={Link} href={whatsappHref(`Hello Appurva Herbals, I want details for ${product.name}.`)} aria-label={`WhatsApp for ${product.name}`} icon={<MessageCircle size={17} />} ml="auto" bg="#e7f8ee" color="#0a6b36" _hover={{ bg: '#d3f1df', textDecoration: 'none' }} />
-            <IconButton as={Link} href={callHref()} aria-label="Call Appurva Herbals" icon={<Phone size={17} />} variant="outline" _hover={{ textDecoration: 'none' }} />
-            <Button bg="#103d2b" color="white" _hover={{ bg: '#0b2c20' }} onClick={onView}>
-              Details
-            </Button>
+            <Flex gap={2} flex="1" wrap="wrap">
+              <IconButton as={Link} href={whatsappHref(`Hello Appurva Herbals, I want details for ${product.name}.`)} aria-label={`WhatsApp for ${product.name}`} icon={<MessageCircle size={17} />} bg="#e7f8ee" color="#0a6b36" _hover={{ bg: '#d3f1df', textDecoration: 'none' }} w={{ base: '100%', sm: 'auto' }} />
+              <IconButton as={Link} href={callHref()} aria-label="Call Appurva Herbals" icon={<Phone size={17} />} variant="outline" _hover={{ textDecoration: 'none' }} w={{ base: '100%', sm: 'auto' }} />
+              <Button bg="#103d2b" color="white" _hover={{ bg: '#0b2c20' }} onClick={onView} w={{ base: '100%', sm: 'auto' }}>
+                Details
+              </Button>
+            </Flex>
           </Flex>
         </Box>
       </Box>
@@ -311,9 +313,22 @@ function ProductCard({ product, onView }: { product: Product; onView: () => void
 
 function ProductVisual({ product }: { product: Product }) {
   return (
-    <Box position="relative" w="100%" h="100%" overflow="hidden">
-      <Image src={product.image} alt={product.name} position="absolute" inset={0} w="100%" h="100%" objectFit="cover" objectPosition={product.imagePosition ?? '50% 45%'} transform={`scale(${product.imageScale ?? 1.08})`} transformOrigin={product.imagePosition ?? '50% 45%'} filter="saturate(1.06) contrast(1.03)" />
-      <Box position="absolute" inset={0} bg="linear-gradient(180deg, transparent 62%, rgba(0,0,0,.18))" pointerEvents="none" />
+    <Box position="relative" w="100%" h="100%" overflow="hidden" bg="white" display="flex" alignItems="center" justifyContent="center" p={{ base: 4, md: 6 }}>
+      <Box position="relative" w="100%" h="100%" maxW="300px" maxH="320px" mx="auto">
+        <Image
+          src={product.image}
+          alt={product.name}
+          position="absolute"
+          inset={0}
+          w="100%"
+          h="100%"
+          objectFit="contain"
+          objectPosition={product.imagePosition ?? '50% 45%'}
+          transform={`scale(${product.imageScale ?? 1.02})`}
+          transformOrigin={product.imagePosition ?? '50% 45%'}
+          filter="saturate(1.08) contrast(1.08)"
+        />
+      </Box>
     </Box>
   )
 }
@@ -337,7 +352,7 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
         </ModalHeader>
         <ModalBody p={{ base: 4, md: 6 }}>
           <Grid templateColumns={{ base: '1fr', md: '.9fr 1.1fr' }} gap={6}>
-            <Box borderRadius="16px" overflow="hidden" bg={`${product.accent}.50`} boxShadow="lg" minH={{ base: '420px', md: '650px' }} position="relative">
+            <Box borderRadius="16px" overflow="hidden" bg="white" boxShadow="xl" minH={{ base: '380px', md: '650px' }} position="relative" p={{ base: 4, md: 6 }}>
               <ProductVisual product={product} />
             </Box>
             <Box>
