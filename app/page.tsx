@@ -130,37 +130,39 @@ export default function Page() {
               </Badge>
             </Flex>
 
-            <Box position="sticky" top={{ base: '56px', md: '74px' }} zIndex={12} bg="rgba(251, 250, 246, .94)" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="lg" p={4} mb={6} backdropFilter="blur(14px)">
-              <Grid templateColumns={{ base: '1fr', lg: '1fr 270px auto' }} gap={4} alignItems="end">
+            <Box position={{ base: 'static', md: 'sticky' }} top={{ base: 'auto', md: '74px' }} zIndex={12} bg="rgba(251, 250, 246, .94)" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="lg" p={{ base: 3, md: 4 }} mb={6} backdropFilter="blur(14px)">
+              <Grid templateColumns={{ base: '1fr', md: '1fr auto' }} gap={{ base: 2, md: 4 }} alignItems="end">
                 <Box>
-                  <Text fontSize="xs" fontWeight="900" color="gray.600" mb={2}>SEARCH</Text>
-                  <Flex bg="white" borderWidth="1px" borderColor="blackAlpha.200" borderRadius="14px" align="center" px={3} py={2}>
-                    <Search size={18} color="#5f6f66" />
-                    <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Try cough, liver, skin, protein, AP-Zyme..." size="lg" border="0" _focusVisible={{ boxShadow: 'none' }} />
+                  <Text fontSize={{ base: '10px', md: 'xs' }} fontWeight="900" color="gray.600" mb={1.5}>SEARCH</Text>
+                  <Flex bg="white" borderWidth="1px" borderColor="blackAlpha.200" borderRadius="12px" align="center" px={2.5} py={1.5} h={{ base: '38px', md: '42px' }}>
+                    <Search size={16} color="#5f6f66" />
+                    <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="cough, liver, skin, protein..." size="sm" border="0" _focusVisible={{ boxShadow: 'none' }} fontSize={{ base: 'sm', md: 'md' }} />
                   </Flex>
                 </Box>
-                <Box>
-                  <Text fontSize="xs" fontWeight="900" color="gray.600" mb={2}>CATEGORY</Text>
-                  <Select value={category} onChange={(event) => setCategory(event.target.value)} size="lg" bg="white" borderColor="blackAlpha.200" borderRadius="14px">
+                <Button size={{ base: 'sm', md: 'lg' }} variant="outline" onClick={() => { setQuery(''); setCategory('All') }} w={{ base: '100%', md: 'auto' }}>
+                  Reset
+                </Button>
+              </Grid>
+
+              <Flex mt={3} gap={1} flexWrap="wrap">
+                <Box flex="1" minW="200px" display={{ base: 'block', md: 'none' }}>
+                  <Text fontSize="xs" fontWeight="900" color="gray.600" mb={1.5}>CATEGORY</Text>
+                  <Select value={category} onChange={(event) => setCategory(event.target.value)} size="sm" bg="white" borderColor="blackAlpha.200" borderRadius="12px">
                     {categories.map((item) => (
                       <option key={item} value={item}>{item}</option>
                     ))}
                   </Select>
                 </Box>
-                <Button size="lg" variant="outline" onClick={() => { setQuery(''); setCategory('All') }}>
-                  Reset
-                </Button>
-              </Grid>
-
-              <Flex gap={2} mt={4} overflowX="auto" pb={2} css={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: '4px' }, '&::-webkit-scrollbar-track': { bg: 'transparent' }, '&::-webkit-scrollbar-thumb': { bg: 'rgba(16, 61, 43, .24)', borderRadius: '999px' } }}>
-                {categories.map((item) => {
-                  const categoryProduct = item === 'All' ? null : featuredProducts.find((product) => product.category === item) ?? filterProducts('', item)[0]
-                  return (
-                    <Button key={item} size="sm" flexShrink={0} borderRadius="full" variant={category === item ? 'solid' : 'outline'} bg={category === item ? '#103d2b' : 'white'} color={category === item ? 'white' : '#103d2b'} borderColor="green.200" leftIcon={categoryProduct ? <ProductIcon iconKey={categoryProduct.iconKey} size={15} /> : <ShieldCheck size={15} />} _hover={{ bg: category === item ? '#0b2c20' : 'green.50' }} onClick={() => setCategory(item)}>
-                      {item}
-                    </Button>
-                  )
-                })}
+                <Flex gap={1.5} overflowX="auto" pb={1.5} css={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: '3px' }, '&::-webkit-scrollbar-track': { bg: 'transparent' }, '&::-webkit-scrollbar-thumb': { bg: 'rgba(16, 61, 43, .24)', borderRadius: '999px' } }}>
+                  {categories.map((item) => {
+                    const categoryProduct = item === 'All' ? null : featuredProducts.find((product) => product.category === item) ?? filterProducts('', item)[0]
+                    return (
+                      <Button key={item} size={{ base: 'xs', md: 'sm' }} flexShrink={0} borderRadius="full" variant={category === item ? 'solid' : 'outline'} bg={category === item ? '#103d2b' : 'white'} color={category === item ? 'white' : '#103d2b'} borderColor="green.200" leftIcon={categoryProduct ? <ProductIcon iconKey={categoryProduct.iconKey} size={13} /> : <ShieldCheck size={13} />} _hover={{ bg: category === item ? '#0b2c20' : 'green.50' }} onClick={() => setCategory(item)}>
+                        {item}
+                      </Button>
+                    )
+                  })}
+                </Flex>
               </Flex>
             </Box>
 
@@ -262,7 +264,7 @@ function ProductCard({ product, onView }: { product: Product; onView: () => void
   return (
     <Box style={{ perspective: '1200px' }} onMouseMove={handleMove} onMouseLeave={() => setTilt({ rotateX: 0, rotateY: 0 })}>
       <Box bg="white" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" overflow="hidden" boxShadow="sm" transition="transform .16s ease, box-shadow .18s ease, border-color .18s ease" transform={`rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateY(${tilt.rotateX || tilt.rotateY ? '-5px' : '0'})`} style={{ transformStyle: 'preserve-3d' }} _hover={{ boxShadow: '2xl', borderColor: 'green.200' }}>
-        <Box position="relative" bg={`linear-gradient(145deg, var(--chakra-colors-${product.accent}-50), white)`} aspectRatio="4 / 5" overflow="hidden">
+        <Box position="relative" bg={`linear-gradient(145deg, var(--chakra-colors-${product.accent}-50), white)`} aspectRatio={{ base: '1 / 1', md: '4 / 5' }} overflow="hidden">
           <Box position="absolute" inset="18px" borderRadius="18px" bg="rgba(255,255,255,.48)" boxShadow="inset 0 0 38px rgba(22,63,46,.10)" />
           <ProductVisual product={product} />
           <Badge position="absolute" top={3} left={3} bg="rgba(255,255,255,.94)" color="#103d2b" borderRadius="full" px={3} py={1} boxShadow="sm">
@@ -273,9 +275,9 @@ function ProductCard({ product, onView }: { product: Product; onView: () => void
           </Badge>
         </Box>
 
-        <Box p={4} transform="translateZ(22px)">
-          <Flex align="start" gap={3}>
-            <Center w="42px" h="42px" borderRadius="14px" bg={`${product.accent}.50`} color="#103d2b" flexShrink={0}>
+        <Box p={{ base: 3, md: 4 }} transform="translateZ(22px)">
+          <Flex align="start" gap={{ base: 2, md: 3 }}>
+            <Center w={{ base: 36, md: 42 }} h={{ base: 36, md: 42 }} borderRadius="14px" bg={`${product.accent}.50`} color="#103d2b" flexShrink={0}>
               <ProductIcon iconKey={product.iconKey} />
             </Center>
             <Box flex="1">
@@ -285,22 +287,22 @@ function ProductCard({ product, onView }: { product: Product; onView: () => void
             <Tag colorScheme={product.accent} borderRadius="full">{product.form}</Tag>
           </Flex>
 
-          <Text mt={3} color="gray.700" minH="72px">{product.short}</Text>
-          <Flex mt={3} gap={2} wrap="wrap">
+          <Text mt={2} color="gray.700" minH={{ base: 'auto', md: '72px' }} fontSize={{ base: 'sm', md: 'md' }}>{product.short}</Text>
+          <Flex mt={2} gap={1.5} wrap="wrap">
             <Tag size="sm" bg="gray.50">{product.category}</Tag>
             <Tag size="sm" bg="green.50" color="green.800">{product.benefits[0]}</Tag>
           </Flex>
 
-          <Divider my={4} />
-          <Flex align="center" gap={3} wrap="wrap" flexDir={{ base: 'column', sm: 'row' }}>
+          <Divider my={{ base: 3, md: 4 }} />
+          <Flex align="center" gap={{ base: 2, md: 3 }} wrap="wrap" flexDir={{ base: 'column', sm: 'row' }}>
             <Box>
               <Text fontSize="xs" color="gray.500" fontWeight="700">PRICE</Text>
-              <Text fontWeight="900">{product.price}</Text>
+              <Text fontWeight="900" fontSize={{ base: 'lg', md: 'xl' }}>{product.price}</Text>
             </Box>
-            <Flex gap={2} flex="1" wrap="wrap">
-              <IconButton as={Link} href={whatsappHref(`Hello Appurva Herbals, I want details for ${product.name}.`)} aria-label={`WhatsApp for ${product.name}`} icon={<MessageCircle size={17} />} bg="#e7f8ee" color="#0a6b36" _hover={{ bg: '#d3f1df', textDecoration: 'none' }} w={{ base: '100%', sm: 'auto' }} />
-              <IconButton as={Link} href={callHref()} aria-label="Call Appurva Herbals" icon={<Phone size={17} />} variant="outline" _hover={{ textDecoration: 'none' }} w={{ base: '100%', sm: 'auto' }} />
-              <Button bg="#103d2b" color="white" _hover={{ bg: '#0b2c20' }} onClick={onView} w={{ base: '100%', sm: 'auto' }}>
+            <Flex gap={1.5} flex="1" wrap="wrap" w={{ base: '100%', sm: 'auto' }}>
+              <IconButton as={Link} href={whatsappHref(`Hello Appurva Herbals, I want details for ${product.name}.`)} aria-label={`WhatsApp for ${product.name}`} icon={<MessageCircle size={17} />} bg="#e7f8ee" color="#0a6b36" _hover={{ bg: '#d3f1df', textDecoration: 'none' }} size={{ base: 'md', md: 'lg' }} w={{ base: '100%', sm: 'auto' }} />
+              <IconButton as={Link} href={callHref()} aria-label="Call Appurva Herbals" icon={<Phone size={17} />} variant="outline" _hover={{ textDecoration: 'none' }} size={{ base: 'md', md: 'lg' }} w={{ base: '100%', sm: 'auto' }} />
+              <Button bg="#103d2b" color="white" _hover={{ bg: '#0b2c20' }} onClick={onView} size={{ base: 'md', md: 'lg' }} w={{ base: '100%', sm: 'auto' }}>
                 Details
               </Button>
             </Flex>
