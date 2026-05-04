@@ -28,12 +28,11 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import type { BoxProps } from '@chakra-ui/react'
 import { Mail, MessageCircle, PackageCheck, Phone, Search, ShieldCheck } from 'lucide-react'
 import { BrandLogo } from '@/app/components/BrandLogo'
 import { ProductGuideBot } from '@/app/components/ProductGuideBot'
 import { ProductIcon } from '@/app/components/ProductIcons'
-import { categories, contact, featuredProducts, filterProducts, type Product } from '@/app/data/products'
+import { categories, contact, featuredProducts, filterProducts, products, type Product } from '@/app/data/products'
 import { callHref, emailHref, whatsappHref } from '@/app/utils/contact'
 
 export default function Page() {
@@ -95,20 +94,16 @@ export default function Page() {
                 </Text>
 
                 <SimpleGrid columns={{ base: 2, md: 4 }} gap={3} mt={8} maxW="780px">
-                  <Metric label="Products" value="16" />
+                  <Metric label="Products" value={`${products.length}`} />
                   <Metric label="Care areas" value={`${categories.length - 1}`} />
                   <Metric label="Images" value="Local" />
                   <Metric label="Guide bot" value="Ready" />
                 </SimpleGrid>
               </Box>
 
-              <Box minH={{ base: 'auto', md: '620px' }} position="relative" display={{ base: 'none', md: 'block' }}>
-                <HeroPhoto product={featuredProducts[1]} left={{ base: '0', md: '6%' }} top={{ base: '4%', md: '0' }} w={{ base: '58%', md: '52%' }} h={{ base: '330px', md: '470px' }} rotate="-5deg" />
-                <HeroPhoto product={featuredProducts[0]} right={{ base: '0', md: '5%' }} top={{ base: '18%', md: '12%' }} w={{ base: '52%', md: '45%' }} h={{ base: '310px', md: '440px' }} rotate="4deg" />
-                <HeroPhoto product={featuredProducts[2]} left={{ base: '23%', md: '27%' }} bottom={{ base: '0', md: '4%' }} w={{ base: '54%', md: '44%' }} h={{ base: '255px', md: '330px' }} />
-                <Box position="absolute" right={{ base: '3%', md: '0' }} bottom={{ base: '16px', md: '46px' }} bg="white" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="xl" p={4} maxW="310px">
-                  <Text fontSize="xs" color="green.700" textTransform="uppercase" fontWeight="900">Search-first workflow</Text>
-                  <Text mt={1} fontWeight="800" fontSize="sm">Find products by care area, inspect details, then call, WhatsApp or email instantly.</Text>
+              <Box minH={{ base: 'auto', md: '620px' }} display="flex" alignItems="center" justifyContent="center">
+                <Box w="100%" maxW="720px" borderRadius="28px" overflow="hidden" boxShadow="2xl" bg="white">
+                  <Image src="/landing.png" alt="Appurva Herbals product landing" w="100%" h="auto" objectFit="cover" />
                 </Box>
               </Box>
             </Grid>
@@ -166,7 +161,7 @@ export default function Page() {
               </Flex>
             </Box>
 
-            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }} gap={{ base: 4, md: 5 }}>
+            <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={{ base: 4, md: 5 }} gridAutoRows="1fr">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.name} product={product} onView={() => viewProduct(product)} />
               ))}
@@ -198,19 +193,6 @@ function Metric({ label, value }: { label: string; value: string }) {
     <Box bg="rgba(255,255,255,.84)" borderWidth="1px" borderColor="white" borderRadius="14px" p={4} boxShadow="sm">
       <Text fontSize="2xl" fontWeight="900" lineHeight="1">{value}</Text>
       <Text mt={1} color="gray.600" fontSize="sm">{label}</Text>
-    </Box>
-  )
-}
-
-type HeroPhotoProps = BoxProps & {
-  product: Product
-  rotate?: string
-}
-
-function HeroPhoto({ product, rotate = '0deg', ...position }: HeroPhotoProps) {
-  return (
-    <Box position="absolute" borderRadius="28px" overflow="hidden" boxShadow="2xl" transform={`rotate(${rotate})`} bg="white" {...position}>
-      <ProductVisual product={product} />
     </Box>
   )
 }
@@ -262,9 +244,9 @@ function ProductCard({ product, onView }: { product: Product; onView: () => void
   }
 
   return (
-    <Box style={{ perspective: '1200px' }} onMouseMove={handleMove} onMouseLeave={() => setTilt({ rotateX: 0, rotateY: 0 })}>
+    <Box h="100%" style={{ perspective: '1200px' }} onMouseMove={handleMove} onMouseLeave={() => setTilt({ rotateX: 0, rotateY: 0 })}>
       <Box bg="white" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" overflow="hidden" boxShadow="sm" transition="transform .16s ease, box-shadow .18s ease, border-color .18s ease" transform={`rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateY(${tilt.rotateX || tilt.rotateY ? '-5px' : '0'})`} style={{ transformStyle: 'preserve-3d' }} _hover={{ boxShadow: '2xl', borderColor: 'green.200' }}>
-        <Box position="relative" bg={`linear-gradient(145deg, var(--chakra-colors-${product.accent}-50), white)`} aspectRatio={{ base: '1 / 1', md: '4 / 5' }} overflow="hidden">
+        <Box position="relative" bg={`linear-gradient(145deg, var(--chakra-colors-${product.accent}-50), white)`} aspectRatio="4 / 5" overflow="hidden">
           <Box position="absolute" inset="18px" borderRadius="18px" bg="rgba(255,255,255,.48)" boxShadow="inset 0 0 38px rgba(22,63,46,.10)" />
           <ProductVisual product={product} />
           <Badge position="absolute" top={3} left={3} bg="rgba(255,255,255,.94)" color="#103d2b" borderRadius="full" px={3} py={1} boxShadow="sm">

@@ -17,6 +17,7 @@
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.14.0",
     "next": "^15.5.15",
+    "nodemailer": "^8.0.7",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
@@ -24,6 +25,7 @@
     "@eslint/eslintrc": "^3",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

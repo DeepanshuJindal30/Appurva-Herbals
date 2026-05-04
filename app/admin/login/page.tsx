@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Container, Heading, Input, Text, VStack, useToast, HStack } from '@chakra-ui/react'
+import { Box, Button, Container, Heading, Input, Text, VStack, useToast } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -11,6 +11,7 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<'email' | 'verify'>('email')
   const [otp, setOtp] = useState('')
+  const [debugOtp, setDebugOtp] = useState<string | null>(null)
   const toast = useToast()
   const router = useRouter()
 
@@ -36,13 +37,17 @@ export default function AdminLogin() {
         body: JSON.stringify({ email }),
       })
 
+      const data = await response.json()
       if (response.ok) {
         setStep('verify')
-        toast({ title: 'OTP sent', description: 'Check your email for verification code.', status: 'success' })
+        if (data.otp) {
+          setDebugOtp(data.otp)
+        }
+        toast({ title: 'OTP sent', description: data?.message || 'Check your email for verification code.', status: 'success' })
       } else {
-        toast({ title: 'Error', description: 'Failed to send OTP', status: 'error' })
+        toast({ title: 'Error', description: data?.error || 'Failed to send OTP', status: 'error' })
       }
-    } catch (error) {
+    } catch {
       toast({ title: 'Error', description: 'Something went wrong', status: 'error' })
     } finally {
       setLoading(false)
@@ -165,9 +170,17 @@ export default function AdminLogin() {
           </form>
         )}
 
-        <Box fontSize="sm" color="gray.500" textAlign="center">
-          <Text>Authorized emails only</Text>
-        </Box>
+        {debugOtp ? (
+          <Box bg="green.50" borderWidth="1px" borderColor="green.100" borderRadius="16px" p={4} textAlign="center">
+            <Text fontWeight="700" color="#0b422c">OTP Preview</Text>
+            <Text mt={2} color="#0f4b34">Use this code if email delivery is not configured:</Text>
+            <Text mt={2} fontSize="2xl" fontWeight="900" letterSpacing="0.2em">{debugOtp}</Text>
+          </Box>
+        ) : (
+          <Box fontSize="sm" color="gray.500" textAlign="center">
+            <Text>Authorized emails only</Text>
+          </Box>
+        )}
       </VStack>
     </Container>
   )
