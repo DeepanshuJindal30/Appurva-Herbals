@@ -1,26 +1,47 @@
 import NextAuth, { type NextAuthOptions } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from 'next-auth/providers/credentials'
 
 const AUTHORIZED_EMAILS = [
   'deepanshujindal907@gmail.com',
   'appurvaherbals@gmail.com',
 ]
 
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Appurva@2026'
+
 const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    CredentialsProvider({
+      name: 'Admin Login',
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        const email = credentials?.email?.toLowerCase().trim()
+        const password = credentials?.password
+
+        if (!email || !password) {
+          return null
+        }
+
+        if (!AUTHORIZED_EMAILS.includes(email)) {
+          return null
+        }
+
+        if (password !== ADMIN_PASSWORD) {
+          return null
+        }
+
+        return {
+          id: email,
+          email,
+          name: 'Admin',
+        }
+      },
     }),
   ],
-  callbacks: {
-    async signIn({ user }) {
-      if (user.email && AUTHORIZED_EMAILS.includes(user.email.toLowerCase())) {
-        return true
-      }
-      return false
-    },
+  callbacks: {    
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
