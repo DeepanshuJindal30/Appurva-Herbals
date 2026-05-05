@@ -86,9 +86,6 @@ export default function AdminLogin() {
           <Text fontWeight="600">Authorized Email Addresses:</Text>
           <Text mt={2}>deepanshujindal907@gmail.com</Text>
           <Text>appurvaherbals@gmail.com</Text>
-          <Text mt={3} color="gray.700">
-            Use password: Appurva@2026
-          </Text>
         </Box>
       </VStack>
     </Container>
