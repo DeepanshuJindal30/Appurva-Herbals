@@ -11,6 +11,9 @@ import {
   Text,
   Input,
   Textarea,
+  Switch,
+  FormControl,
+  FormLabel,
   Table,
   Thead,
   Tbody,
@@ -105,6 +108,10 @@ export default function AdminDashboard() {
   }
 
   const isEditing = useMemo(() => Boolean(editingProductId), [editingProductId])
+  const isMrpOnRequest = useMemo(
+    () => form.price.trim().toLowerCase() === 'mrp on request',
+    [form.price],
+  )
 
   function resetForm() {
     setEditingProductId(null)
@@ -125,6 +132,16 @@ export default function AdminDashboard() {
       audience: product.audience,
       accent: product.accent,
     })
+  }
+
+  function handleMrpModeChange(enabled: boolean) {
+    if (enabled) {
+      setForm((prev) => ({ ...prev, price: 'MRP on request' }))
+      return
+    }
+    if (form.price.trim().toLowerCase() === 'mrp on request') {
+      setForm((prev) => ({ ...prev, price: '' }))
+    }
   }
 
   async function handleSave() {
@@ -274,7 +291,22 @@ export default function AdminDashboard() {
               <Input placeholder="Pack (e.g. 200 ml)" value={form.pack} onChange={(e) => setForm((prev) => ({ ...prev, pack: e.target.value }))} />
             </HStack>
             <HStack>
-              <Input placeholder="Price" value={form.price} onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))} />
+              <FormControl display="flex" alignItems="center">
+                <FormLabel htmlFor="mrp-on-request-switch" mb="0" minW="160px">
+                  MRP on request
+                </FormLabel>
+                <Switch
+                  id="mrp-on-request-switch"
+                  isChecked={isMrpOnRequest}
+                  onChange={(e) => handleMrpModeChange(e.target.checked)}
+                />
+              </FormControl>
+              <Input
+                placeholder="Price (e.g. Rs 220)"
+                value={isMrpOnRequest ? '' : form.price}
+                onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
+                isDisabled={isMrpOnRequest}
+              />
               <Input placeholder="Audience" value={form.audience} onChange={(e) => setForm((prev) => ({ ...prev, audience: e.target.value }))} />
             </HStack>
             <HStack>
