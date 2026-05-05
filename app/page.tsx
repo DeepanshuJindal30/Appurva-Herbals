@@ -252,9 +252,6 @@ function ProductCard({ product, onView }: { product: Product; onView: () => void
           <Badge position="absolute" top={3} left={3} bg="rgba(255,255,255,.94)" color="#103d2b" borderRadius="full" px={3} py={1} boxShadow="sm">
             {product.pack}
           </Badge>
-          <Badge position="absolute" bottom={3} right={3} bg="rgba(16,61,43,.92)" color="white" borderRadius="full" px={3} py={1} boxShadow="sm">
-            Inspect
-          </Badge>
         </Box>
 
         <Box p={{ base: 3, md: 4 }} transform="translateZ(22px)">
