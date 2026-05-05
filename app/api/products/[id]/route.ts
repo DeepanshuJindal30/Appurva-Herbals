@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+import { products as defaultProducts } from '@/app/data/products'
 
 const PRODUCTS_FILE = path.join(process.cwd(), 'data', 'products.json')
 
@@ -27,13 +28,29 @@ interface Product {
   accent: string
 }
 
+function getDefaultProducts(): Product[] {
+  return defaultProducts.map((product, index) => ({
+    id: (index + 1).toString(),
+    name: product.name,
+    category: product.category,
+    price: product.price,
+    form: product.form,
+    pack: product.pack,
+    benefits: product.benefits,
+    short: product.short,
+    image: product.image,
+    audience: product.audience,
+    accent: product.accent,
+  }))
+}
+
 async function getProducts() {
   try {
     await ensureDataDir()
     const data = await fs.readFile(PRODUCTS_FILE, 'utf-8')
     return JSON.parse(data) as Product[]
   } catch {
-    return []
+    return getDefaultProducts()
   }
 }
 

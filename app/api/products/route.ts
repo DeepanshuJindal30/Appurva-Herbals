@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+import { products as defaultProducts } from '@/app/data/products'
 
 const PRODUCTS_FILE = path.join(process.cwd(), 'data', 'products.json')
 
@@ -11,36 +12,6 @@ async function ensureDataDir() {
   } catch {
     console.log('Data dir already exists')
   }
-}
-
-async function getProducts() {
-  try {
-    await ensureDataDir()
-    const data = await fs.readFile(PRODUCTS_FILE, 'utf-8')
-    return JSON.parse(data) as Product[]
-  } catch {
-    // Return default products if file doesn't exist
-    return [
-      {
-        id: '1',
-        name: 'AP FIT',
-        category: 'Nutrition',
-        price: 'MRP on request',
-        form: 'Powder',
-        pack: '250g',
-        benefits: ['Fitness', 'Energy'],
-        short: 'Premium fitness supplement for optimal performance',
-        image: '/products/AP-FIT.png',
-        audience: 'Athletes & Fitness Enthusiasts',
-        accent: 'green',
-      },
-    ]
-  }
-}
-
-async function saveProducts(products: Product[]) {
-  await ensureDataDir()
-  await fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2))
 }
 
 interface Product {
@@ -55,6 +26,37 @@ interface Product {
   image: string
   audience: string
   accent: string
+}
+
+function getDefaultProducts(): Product[] {
+  return defaultProducts.map((product, index) => ({
+    id: (index + 1).toString(),
+    name: product.name,
+    category: product.category,
+    price: product.price,
+    form: product.form,
+    pack: product.pack,
+    benefits: product.benefits,
+    short: product.short,
+    image: product.image,
+    audience: product.audience,
+    accent: product.accent,
+  }))
+}
+
+async function getProducts() {
+  try {
+    await ensureDataDir()
+    const data = await fs.readFile(PRODUCTS_FILE, 'utf-8')
+    return JSON.parse(data) as Product[]
+  } catch {
+    return getDefaultProducts()
+  }
+}
+
+async function saveProducts(products: Product[]) {
+  await ensureDataDir()
+  await fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2))
 }
 
 export async function GET() {
