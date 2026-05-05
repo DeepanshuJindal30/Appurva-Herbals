@@ -1,6 +1,10 @@
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+if (!process.env.NEXTAUTH_URL) {
+  process.env.NEXTAUTH_URL = 'https://appurvaherbals.vercel.app'
+}
+
 const AUTHORIZED_EMAILS = [
   'deepanshujindal907@gmail.com',
   'appurvaherbals@gmail.com',
