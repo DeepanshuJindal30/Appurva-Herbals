@@ -7,9 +7,10 @@ const AUTHORIZED_EMAILS = [
 ]
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Appurva@2026'
+const NEXTAUTH_SECRET_FALLBACK = 'appurva-admin-secret-2026-change-me'
 
 const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || NEXTAUTH_SECRET_FALLBACK,
   providers: [
     CredentialsProvider({
       name: 'Admin Login',
