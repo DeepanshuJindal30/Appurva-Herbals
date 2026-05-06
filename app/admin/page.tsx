@@ -25,7 +25,7 @@ import {
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { LogOut, Pencil, Plus, Trash2 } from 'lucide-react'
-import { products as defaultProducts, type Product, type ProductIconKey } from '@/app/data/products'
+import { products as defaultProducts, type ProductIconKey } from '@/app/data/products'
 import { loadStoredProducts, productIdFromName, saveStoredProducts, type StoredProduct } from '@/app/utils/productStore'
 
 type AdminProduct = StoredProduct

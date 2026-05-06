@@ -44,21 +44,6 @@ function getDefaultProducts(): Product[] {
   }))
 }
 
-function mergeWithDefaults(products: Product[]): Product[] {
-  const defaults = getDefaultProducts()
-  const byName = new Map<string, Product>()
-
-  for (const product of defaults) {
-    byName.set(product.name.toLowerCase(), product)
-  }
-
-  for (const product of products) {
-    byName.set(product.name.toLowerCase(), product)
-  }
-
-  return Array.from(byName.values())
-}
-
 async function getProducts() {
   try {
     await ensureDataDir()
@@ -67,7 +52,7 @@ async function getProducts() {
     if (!products.length) {
       return getDefaultProducts()
     }
-    return mergeWithDefaults(products)
+    return products
   } catch {
     return getDefaultProducts()
   }

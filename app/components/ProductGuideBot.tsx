@@ -13,7 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { Bot, Mail, MessageCircle, Phone, Send, X } from 'lucide-react'
-import { contact, createSearchText, products } from '@/app/data/products'
+import { contact, createSearchText, products as defaultProducts, type Product } from '@/app/data/products'
 import { callHref, emailHref, whatsappHref } from '@/app/utils/contact'
 
 type Message = {
@@ -28,7 +28,7 @@ const quickPrompts = [
   'Contact details',
 ]
 
-export function ProductGuideBot() {
+export function ProductGuideBot({ products = defaultProducts }: { products?: Product[] }) {
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([
@@ -38,7 +38,7 @@ export function ProductGuideBot() {
     },
   ])
 
-  const productNames = useMemo(() => products.map((product) => product.name).join(', '), [])
+  const productNames = useMemo(() => products.map((product) => product.name).join(', '), [products])
 
   function ask(question: string) {
     const clean = question.trim()
@@ -47,7 +47,7 @@ export function ProductGuideBot() {
     setMessages((current) => [
       ...current,
       { role: 'user', text: clean },
-      { role: 'bot', text: buildBotAnswer(clean) },
+      { role: 'bot', text: buildBotAnswer(clean, products) },
     ])
     setInput('')
   }
@@ -123,7 +123,7 @@ export function ProductGuideBot() {
   )
 }
 
-function buildBotAnswer(question: string) {
+function buildBotAnswer(question: string, products: Product[]) {
   const normalized = question.toLowerCase()
 
   if (/\b(contact|phone|call|email|whatsapp|address|location)\b/.test(normalized)) {

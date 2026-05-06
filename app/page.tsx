@@ -1,6 +1,6 @@
 'use client'
 
-import { type MouseEvent, useMemo, useState } from 'react'
+import { type MouseEvent, useEffect, useMemo, useState } from 'react'
 import {
   Badge,
   Box,
@@ -32,20 +32,46 @@ import { Mail, MessageCircle, PackageCheck, Phone, Search, ShieldCheck } from 'l
 import { BrandLogo } from '@/app/components/BrandLogo'
 import { ProductGuideBot } from '@/app/components/ProductGuideBot'
 import { ProductIcon } from '@/app/components/ProductIcons'
-import { categories, contact, featuredProducts, filterProducts, products, type Product } from '@/app/data/products'
+import { contact, filterProductList, getCategories, products, type Product } from '@/app/data/products'
 import { callHref, emailHref, whatsappHref } from '@/app/utils/contact'
+import {
+  listenForStoredProductUpdates,
+  loadStoredProducts,
+} from '@/app/utils/productStore'
 
 export default function Page() {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('All')
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [catalogueProducts, setCatalogueProducts] = useState<Product[]>(products)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const filteredProducts = useMemo(() => filterProducts(query, category), [category, query])
+  const catalogueCategories = useMemo(() => getCategories(catalogueProducts), [catalogueProducts])
+  const filteredProducts = useMemo(() => filterProductList(catalogueProducts, query, category), [catalogueProducts, category, query])
+
+  useEffect(() => {
+    function refreshCatalogue() {
+      setCatalogueProducts(loadStoredProducts(products))
+    }
+
+    refreshCatalogue()
+    return listenForStoredProductUpdates(refreshCatalogue)
+  }, [])
+
+  useEffect(() => {
+    if (!catalogueCategories.includes(category)) {
+      setCategory('All')
+    }
+  }, [catalogueCategories, category])
 
   function viewProduct(product: Product) {
     setSelectedProduct(product)
     onOpen()
+  }
+
+  function goToCatalogue(nextCategory = 'All') {
+    setCategory(nextCategory)
+    document.getElementById('catalogue')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
@@ -54,17 +80,57 @@ export default function Page() {
         <Container maxW="7xl" py={3}>
           <Flex align="center" gap={4}>
             <BrandLogo />
-            <Flex ml="auto" gap={2} display={{ base: 'none', md: 'flex' }} align="center">
-              <Text fontSize="sm" color="gray.600">{contact.location} | {contact.phone}</Text>
-              <Button as={Link} href="#catalogue" size="sm" variant="ghost" _hover={{ textDecoration: 'none', bg: 'blackAlpha.50' }}>Products</Button>
-              <Button as={Link} href={whatsappHref()} size="sm" leftIcon={<MessageCircle size={16} />} bg="#103d2b" color="white" _hover={{ bg: '#0b2c20', textDecoration: 'none' }}>WhatsApp</Button>
+            <Flex
+              ml="auto"
+              gap={{ base: 1, md: 3 }}
+              align="center"
+              overflowX={{ base: 'auto', md: 'visible' }}
+              css={{ '&::-webkit-scrollbar': { display: 'none' } }}
+            >
+              <Button onClick={() => goToCatalogue()} size={{ base: 'xs', md: 'sm' }} variant="ghost" _hover={{ bg: 'blackAlpha.50' }}>
+                Catalogue
+              </Button>
+              <Button as={Link} href="#about" size={{ base: 'xs', md: 'sm' }} variant="ghost" _hover={{ textDecoration: 'none', bg: 'blackAlpha.50' }}>
+                About
+              </Button>
+              <Button as={Link} href="#doctors" size={{ base: 'xs', md: 'sm' }} variant="ghost" _hover={{ textDecoration: 'none', bg: 'blackAlpha.50' }}>
+                For Doctors
+              </Button>
+              <Button as={Link} href="#contact" size={{ base: 'xs', md: 'sm' }} variant="ghost" _hover={{ textDecoration: 'none', bg: 'blackAlpha.50' }}>
+                Contact
+              </Button>
+              <Text display={{ base: 'none', lg: 'block' }} fontSize="sm" color="gray.600" whiteSpace="nowrap">{contact.phone}</Text>
             </Flex>
+          </Flex>
+          <Flex
+            mt={3}
+            gap={2}
+            overflowX="auto"
+            pb={1}
+            css={{ '&::-webkit-scrollbar': { display: 'none' } }}
+          >
+            {catalogueCategories.map((item) => (
+              <Button
+                key={item}
+                size="xs"
+                flexShrink={0}
+                borderRadius="full"
+                variant={category === item ? 'solid' : 'outline'}
+                bg={category === item ? '#103d2b' : 'white'}
+                color={category === item ? 'white' : '#103d2b'}
+                borderColor="green.200"
+                onClick={() => goToCatalogue(item)}
+                _hover={{ bg: category === item ? '#0b2c20' : 'green.50' }}
+              >
+                {item === 'All' ? 'All products' : item}
+              </Button>
+            ))}
           </Flex>
         </Container>
       </Box>
 
       <Box as="main">
-        <Box bg="radial-gradient(circle at 18% 16%, rgba(211, 167, 53, .30), transparent 28%), radial-gradient(circle at 92% 10%, rgba(47, 123, 89, .24), transparent 30%), linear-gradient(135deg, #fffaf0 0%, #edf5eb 100%)" borderBottomWidth="1px" borderColor="blackAlpha.100">
+        <Box id="about" scrollMarginTop="86px" bg="radial-gradient(circle at 18% 16%, rgba(211, 167, 53, .30), transparent 28%), radial-gradient(circle at 92% 10%, rgba(47, 123, 89, .24), transparent 30%), linear-gradient(135deg, #fffaf0 0%, #edf5eb 100%)" borderBottomWidth="1px" borderColor="blackAlpha.100">
           <Container maxW="7xl" pt={{ base: 6, md: 14 }} pb={{ base: 8, md: 16 }}>
             <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={{ base: 8, lg: 12 }} alignItems="center">
               <Box>
@@ -94,8 +160,8 @@ export default function Page() {
                 </Text>
 
                 <SimpleGrid columns={{ base: 2, md: 4 }} gap={3} mt={8} maxW="780px">
-                  <Metric label="Products" value={`${products.length}`} />
-                  <Metric label="Care areas" value={`${categories.length - 1}`} />
+                  <Metric label="Products" value={`${catalogueProducts.length}`} />
+                  <Metric label="Care areas" value={`${catalogueCategories.length - 1}`} />
                   <Metric label="Images" value="Local" />
                   <Metric label="Guide bot" value="Ready" />
                 </SimpleGrid>
@@ -112,7 +178,7 @@ export default function Page() {
 
         <TrustStrip />
 
-        <Box id="catalogue" bg="#fbfaf6" py={{ base: 6, md: 12 }}>
+        <Box id="catalogue" scrollMarginTop="86px" bg="#fbfaf6" py={{ base: 6, md: 12 }}>
           <Container maxW="7xl">
             <Flex justify="space-between" align={{ base: 'start', md: 'end' }} gap={4} flexDir={{ base: 'column', md: 'row' }} mb={8}>
               <Box>
@@ -143,14 +209,14 @@ export default function Page() {
                 <Box flex="1" minW="200px" display={{ base: 'block', md: 'none' }}>
                   <Text fontSize="xs" fontWeight="900" color="gray.600" mb={1.5}>CATEGORY</Text>
                   <Select value={category} onChange={(event) => setCategory(event.target.value)} size="sm" bg="white" borderColor="blackAlpha.200" borderRadius="12px">
-                    {categories.map((item) => (
+                    {catalogueCategories.map((item) => (
                       <option key={item} value={item}>{item}</option>
                     ))}
                   </Select>
                 </Box>
                 <Flex gap={1.5} overflowX="auto" pb={1.5} css={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: '3px' }, '&::-webkit-scrollbar-track': { bg: 'transparent' }, '&::-webkit-scrollbar-thumb': { bg: 'rgba(16, 61, 43, .24)', borderRadius: '999px' } }}>
-                  {categories.map((item) => {
-                    const categoryProduct = item === 'All' ? null : featuredProducts.find((product) => product.category === item) ?? filterProducts('', item)[0]
+                  {catalogueCategories.map((item) => {
+                    const categoryProduct = item === 'All' ? null : catalogueProducts.find((product) => product.category === item) ?? filterProductList(catalogueProducts, '', item)[0]
                     return (
                       <Button key={item} size={{ base: 'xs', md: 'sm' }} flexShrink={0} borderRadius="full" variant={category === item ? 'solid' : 'outline'} bg={category === item ? '#103d2b' : 'white'} color={category === item ? 'white' : '#103d2b'} borderColor="green.200" leftIcon={categoryProduct ? <ProductIcon iconKey={categoryProduct.iconKey} size={13} /> : <ShieldCheck size={13} />} _hover={{ bg: category === item ? '#0b2c20' : 'green.50' }} onClick={() => setCategory(item)}>
                         {item}
@@ -183,7 +249,7 @@ export default function Page() {
 
       <Footer />
       <ProductModal product={selectedProduct} isOpen={isOpen} onClose={onClose} />
-      <ProductGuideBot />
+      <ProductGuideBot products={catalogueProducts} />
     </Box>
   )
 }
@@ -205,7 +271,7 @@ function TrustStrip() {
   ]
 
   return (
-    <Box bg="#10251d" color="white" py={5}>
+    <Box id="doctors" scrollMarginTop="86px" bg="#10251d" color="white" py={5}>
       <Container maxW="7xl">
         <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={4}>
           {items.map((item) => {
@@ -394,7 +460,7 @@ function InfoTile({ label, value }: { label: string; value: string }) {
 
 function ContactSection() {
   return (
-    <Box bg="#173d31" color="white" py={{ base: 10, md: 14 }}>
+    <Box id="contact" scrollMarginTop="86px" bg="#173d31" color="white" py={{ base: 10, md: 14 }}>
       <Container maxW="7xl">
         <Grid templateColumns={{ base: '1fr', md: '1.2fr .8fr' }} gap={8} alignItems="center">
           <Box>

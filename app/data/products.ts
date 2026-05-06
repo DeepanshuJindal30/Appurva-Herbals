@@ -345,9 +345,17 @@ export function createSearchText(product: Product) {
 }
 
 export function filterProducts(query: string, category: string) {
+  return filterProductList(products, query, category)
+}
+
+export function getCategories(productList: Product[]) {
+  return ['All', ...Array.from(new Set(productList.map((product) => product.category)))]
+}
+
+export function filterProductList(productList: Product[], query: string, category: string) {
   const term = query.trim().toLowerCase()
 
-  return products.filter((product) => {
+  return productList.filter((product) => {
     const matchesCategory = category === 'All' || product.category === category
     return matchesCategory && (!term || createSearchText(product).includes(term))
   })

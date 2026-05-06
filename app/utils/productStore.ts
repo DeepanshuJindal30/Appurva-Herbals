@@ -3,6 +3,7 @@ import type { Product } from '@/app/data/products'
 export type StoredProduct = Product & { id: string }
 
 const STORAGE_KEY = 'appurva-products-v1'
+const STORAGE_UPDATED_EVENT = 'appurva-products-updated'
 const hiddenProductNames = new Set(['ap-fit energy drink'])
 
 function isVisibleProduct(product: Product) {
@@ -53,4 +54,23 @@ export function loadStoredProducts(defaultProducts: Product[]): StoredProduct[] 
 export function saveStoredProducts(products: StoredProduct[]) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(withProductIds(products)))
+  window.dispatchEvent(new Event(STORAGE_UPDATED_EVENT))
+}
+
+export function listenForStoredProductUpdates(callback: () => void) {
+  if (typeof window === 'undefined') return () => {}
+
+  function handleStorage(event: StorageEvent) {
+    if (event.key === STORAGE_KEY) {
+      callback()
+    }
+  }
+
+  window.addEventListener('storage', handleStorage)
+  window.addEventListener(STORAGE_UPDATED_EVENT, callback)
+
+  return () => {
+    window.removeEventListener('storage', handleStorage)
+    window.removeEventListener(STORAGE_UPDATED_EVENT, callback)
+  }
 }
