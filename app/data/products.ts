@@ -60,26 +60,6 @@ export const products: Product[] = [
     imageScale: 1.12,
   },
   {
-    name: 'AP-Fit Energy Drink',
-    localName: 'AP-Fit',
-    category: 'Nutrition',
-    iconKey: 'nutrition',
-    form: 'Drink mix',
-    pack: '100 gm',
-    image: '/products/AP-FIT-ENERGY-DRINK.jpg',
-    price: 'MRP on request',
-    short: 'Glucose, vitamins, zinc and minerals in orange flavour.',
-    benefits: ['Energy drink', 'Vitamin and mineral support', 'Calcium source'],
-    details: 'A vitamin-rich instant energy drink positioned for daily energy and immunity support.',
-    accent: 'yellow',
-    audience: 'Fatigue and recovery',
-    searchTerms: ['energy', 'glucose', 'vitamins', 'zinc', 'minerals', 'calcium', 'orange'],
-    suggestedQuestions: ['Which product supports energy?', 'Show vitamin products'],
-    primaryActionText: 'Ask for energy drink',
-    imagePosition: '50% 40%',
-    imageScale: 1.16,
-  },
-  {
     name: 'AP-Min',
     localName: 'AP-Min',
     category: 'Nutrition',
@@ -342,7 +322,11 @@ export const products: Product[] = [
 ]
 
 export const categories = ['All', ...Array.from(new Set(products.map((product) => product.category)))]
-export const featuredProducts = [products[8], products[3], products[11]]
+export const featuredProducts = [
+  products.find((product) => product.name === 'AP-Rub'),
+  products.find((product) => product.name === 'AP-Liv D.S.'),
+  products.find((product) => product.name === 'AP-Pure'),
+].filter(Boolean) as Product[]
 
 export function createSearchText(product: Product) {
   return [
