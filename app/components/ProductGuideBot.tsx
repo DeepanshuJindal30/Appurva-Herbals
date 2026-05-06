@@ -78,6 +78,9 @@ export function ProductGuideBot() {
           </Box>
 
           <Box p={4} borderTopWidth="1px" borderColor="blackAlpha.100">
+            <Text fontSize="xs" fontWeight="700" color="#103d2b" mb={2}>
+              Ask again:
+            </Text>
             <Flex gap={2} wrap="wrap" mb={3}>
               {quickPrompts.map((prompt) => (
                 <Button key={prompt} size="xs" borderRadius="full" variant="outline" onClick={() => ask(prompt)}>
