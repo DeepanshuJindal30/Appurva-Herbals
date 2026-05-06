@@ -25,20 +25,10 @@ import {
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { LogOut, Pencil, Plus, Trash2 } from 'lucide-react'
+import { products as defaultProducts, type Product, type ProductIconKey } from '@/app/data/products'
+import { loadStoredProducts, productIdFromName, saveStoredProducts, type StoredProduct } from '@/app/utils/productStore'
 
-type AdminProduct = {
-  id: string
-  name: string
-  category: string
-  price: string
-  form: string
-  pack: string
-  benefits: string[]
-  short: string
-  image: string
-  audience: string
-  accent: string
-}
+type AdminProduct = StoredProduct
 
 type ProductForm = {
   name: string
@@ -66,6 +56,60 @@ const emptyForm: ProductForm = {
   accent: 'green',
 }
 
+const categoryIconMap: Record<string, ProductIconKey> = {
+  nutrition: 'nutrition',
+  liver: 'liver',
+  digestive: 'digestive',
+  respiratory: 'respiratory',
+  urinary: 'urinary',
+  pain: 'pain',
+  women: 'women',
+  skin: 'skin',
+  oral: 'oral',
+  dental: 'oral',
+}
+
+function iconKeyForCategory(category: string): ProductIconKey {
+  const normalized = category.trim().toLowerCase()
+  const match = Object.entries(categoryIconMap).find(([keyword]) => normalized.includes(keyword))
+  return match?.[1] ?? 'nutrition'
+}
+
+function formToProduct(form: ProductForm, base?: AdminProduct): AdminProduct {
+  const name = form.name.trim()
+  const category = form.category.trim()
+  const benefits = form.benefits.split(',').map((item) => item.trim()).filter(Boolean)
+  const searchTerms = Array.from(new Set([
+    name,
+    category,
+    form.form.trim(),
+    form.audience.trim(),
+    ...benefits,
+  ].filter(Boolean)))
+
+  return {
+    id: base?.id ?? `${productIdFromName(name)}-${Date.now()}`,
+    name,
+    localName: base?.localName || name,
+    category,
+    iconKey: base?.iconKey ?? iconKeyForCategory(category),
+    form: form.form.trim(),
+    pack: form.pack.trim(),
+    image: form.image.trim() || '/landing.png',
+    price: form.price.trim() || 'MRP on request',
+    short: form.short.trim(),
+    benefits,
+    details: base?.details || form.short.trim(),
+    accent: form.accent.trim() || 'green',
+    audience: form.audience.trim(),
+    searchTerms: base?.searchTerms?.length ? Array.from(new Set([...base.searchTerms, ...searchTerms])) : searchTerms,
+    suggestedQuestions: base?.suggestedQuestions?.length ? base.suggestedQuestions : [`Tell me about ${name}`, `Show ${category} products`],
+    primaryActionText: base?.primaryActionText || `Ask for ${name}`,
+    imagePosition: base?.imagePosition,
+    imageScale: base?.imageScale,
+  }
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -86,25 +130,15 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      void loadProducts()
+      loadProducts()
     }
   }, [status])
 
-  async function loadProducts() {
+  function loadProducts() {
     setIsLoadingProducts(true)
     setError('')
-    try {
-      const response = await fetch('/api/products', { cache: 'no-store' })
-      if (!response.ok) {
-        throw new Error('Failed to fetch products')
-      }
-      const data: AdminProduct[] = await response.json()
-      setProducts(data)
-    } catch {
-      setError('Unable to load products.')
-    } finally {
-      setIsLoadingProducts(false)
-    }
+    setProducts(loadStoredProducts(defaultProducts))
+    setIsLoadingProducts(false)
   }
 
   const isEditing = useMemo(() => Boolean(editingProductId), [editingProductId])
@@ -144,7 +178,7 @@ export default function AdminDashboard() {
     }
   }
 
-  async function handleSave() {
+  function handleSave() {
     if (!form.name.trim() || !form.category.trim()) {
       setError('Name and category are required.')
       return
@@ -153,37 +187,21 @@ export default function AdminDashboard() {
     setIsSaving(true)
     setError('')
 
-    const payload = {
-      name: form.name.trim(),
-      category: form.category.trim(),
-      price: form.price.trim(),
-      form: form.form.trim(),
-      pack: form.pack.trim(),
-      benefits: form.benefits.split(',').map((item) => item.trim()).filter(Boolean),
-      short: form.short.trim(),
-      image: form.image.trim(),
-      audience: form.audience.trim(),
-      accent: form.accent.trim() || 'green',
-    }
-
     try {
-      const url = isEditing ? `/api/products/${editingProductId}` : '/api/products'
-      const method = isEditing ? 'PUT' : 'POST'
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!response.ok) {
-        throw new Error('Save failed')
-      }
+      const baseProduct = products.find((product) => product.id === editingProductId)
+      const savedProduct = formToProduct(form, baseProduct)
+      const nextProducts = isEditing
+        ? products.map((product) => product.id === editingProductId ? savedProduct : product)
+        : [...products, savedProduct]
+
+      setProducts(nextProducts)
+      saveStoredProducts(nextProducts)
       toast({
         title: isEditing ? 'Product updated' : 'Product created',
         status: 'success',
         duration: 2500,
       })
       resetForm()
-      await loadProducts()
     } catch {
       setError('Failed to save product.')
     } finally {
@@ -191,26 +209,22 @@ export default function AdminDashboard() {
     }
   }
 
-  async function handleDelete(productId: string) {
+  function handleDelete(productId: string) {
     const ok = window.confirm('Delete this product?')
     if (!ok) return
-    try {
-      const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' })
-      if (!response.ok) {
-        throw new Error('Delete failed')
-      }
-      toast({
-        title: 'Product deleted',
-        status: 'success',
-        duration: 2500,
-      })
-      if (editingProductId === productId) {
-        resetForm()
-      }
-      await loadProducts()
-    } catch {
-      setError('Failed to delete product.')
+
+    const nextProducts = products.filter((product) => product.id !== productId)
+    setProducts(nextProducts)
+    saveStoredProducts(nextProducts)
+    if (editingProductId === productId) {
+      resetForm()
     }
+    setError('')
+    toast({
+      title: 'Product deleted',
+      status: 'success',
+      duration: 2500,
+    })
   }
 
   async function handleImageFileChange(file: File | null) {
