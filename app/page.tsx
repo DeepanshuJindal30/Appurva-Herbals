@@ -106,31 +106,6 @@ export default function Page() {
               <Button as={Link} href={callHref()} size="xs" variant="outline" _hover={{ textDecoration: 'none' }}>Call</Button>
             </Flex>
           )}
-          <Flex
-            mt={2}
-            gap={2}
-            overflowX="auto"
-            pb={1}
-            display={{ base: 'none', md: 'flex' }}
-            css={{ '&::-webkit-scrollbar': { display: 'none' } }}
-          >
-            {catalogueCategories.map((item) => (
-              <Button
-                key={item}
-                size="xs"
-                flexShrink={0}
-                borderRadius="full"
-                variant={category === item ? 'solid' : 'outline'}
-                bg={category === item ? '#103d2b' : 'white'}
-                color={category === item ? 'white' : '#103d2b'}
-                borderColor="green.200"
-                onClick={() => goToCatalogue(item)}
-                _hover={{ bg: category === item ? '#0b2c20' : 'green.50' }}
-              >
-                {item === 'All' ? 'All products' : item}
-              </Button>
-            ))}
-          </Flex>
         </Container>
       </Box>
 
@@ -192,7 +167,7 @@ export default function Page() {
               </Badge>
             </Flex>
 
-            <Box position={{ base: 'static', md: 'sticky' }} top={{ base: 'auto', md: '74px' }} zIndex={12} bg="rgba(251, 250, 246, .94)" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="lg" p={{ base: 3, md: 4 }} mb={6} backdropFilter="blur(14px)">
+            <Box position={{ base: 'static', md: 'sticky' }} top={{ base: 'auto', md: '58px' }} zIndex={12} bg="rgba(251, 250, 246, .94)" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="18px" boxShadow="lg" p={{ base: 3, md: 4 }} mb={6} backdropFilter="blur(14px)">
               <Grid templateColumns={{ base: '1fr', md: '1fr auto' }} gap={{ base: 2, md: 4 }} alignItems="end">
                 <Box>
                   <Text fontSize={{ base: '10px', md: 'xs' }} fontWeight="900" color="gray.600" mb={1.5}>SEARCH</Text>
@@ -215,7 +190,7 @@ export default function Page() {
                     ))}
                   </Select>
                 </Box>
-                <Flex gap={1.5} overflowX="auto" pb={1.5} css={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: '3px' }, '&::-webkit-scrollbar-track': { bg: 'transparent' }, '&::-webkit-scrollbar-thumb': { bg: 'rgba(16, 61, 43, .24)', borderRadius: '999px' } }}>
+                <Flex gap={1.5} overflowX="auto" display={{ base: 'none', md: 'flex' }} pb={1.5} css={{ scrollBehavior: 'smooth', '&::-webkit-scrollbar': { height: '3px' }, '&::-webkit-scrollbar-track': { bg: 'transparent' }, '&::-webkit-scrollbar-thumb': { bg: 'rgba(16, 61, 43, .24)', borderRadius: '999px' } }}>
                   {catalogueCategories.map((item) => {
                     const categoryProduct = item === 'All' ? null : catalogueProducts.find((product) => product.category === item) ?? filterProductList(catalogueProducts, '', item)[0]
                     return (
