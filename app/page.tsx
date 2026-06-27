@@ -28,12 +28,12 @@ import {
   IconButton,
 } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
-import { MessageCircle, Menu, PackageCheck, Phone, Search, ShieldCheck, X } from 'lucide-react'
+import { MessageCircle, Menu, PackageCheck, Phone, Search, ShieldCheck, X, Mail } from 'lucide-react'
 import { BrandLogo } from '@/app/components/BrandLogo'
 import { ProductGuideBot } from '@/app/components/ProductGuideBot'
 import { ProductIcon } from '@/app/components/ProductIcons'
 import { contact, filterProductList, getCategories, products, type Product } from '@/app/data/products'
-import { callHref, whatsappHref } from '@/app/utils/contact'
+import { callHref, emailHref, whatsappHref } from '@/app/utils/contact'
 import {
   listenForStoredProductUpdates,
   loadStoredProducts,
@@ -377,25 +377,93 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
           </Flex>
         </ModalHeader>
         <ModalBody p={{ base: 3, md: 6 }}>
-          <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
-            <Box borderRadius="14px" overflow="hidden" bg="white" boxShadow="md" minH={{ base: '220px', md: '420px' }}>
+          <Grid templateColumns={{ base: '1fr', md: '0.9fr 1.1fr' }} gap={{ base: 4, md: 6 }}>
+            <Box borderRadius="16px" overflow="hidden" bg="white" boxShadow="xl" minH={{ base: '240px', md: '480px' }}>
               <ProductVisual product={product} />
             </Box>
             <Box>
               <Flex gap={2} wrap="wrap" mb={3}>
                 <Tag size="sm">{product.form}</Tag>
                 <Tag size="sm">{product.pack}</Tag>
+                <Tag size="sm">{product.audience}</Tag>
+                {product.flavor && product.flavor !== '-' && <Tag size="sm">{product.flavor}</Tag>}
               </Flex>
-              <Text fontSize={{ base: 'sm', md: 'md' }} color="gray.700">{product.short}</Text>
-              <Flex mt={4} gap={2} wrap="wrap">
-                {product.benefits.map((benefit) => (
-                  <Tag key={benefit} size="sm" bg="green.50" color="green.800">{benefit}</Tag>
-                ))}
-              </Flex>
+              <Heading size={{ base: 'lg', md: 'xl' }}>{product.name}</Heading>
+              {product.hindi && (
+                <Text mt={1} fontSize="sm" color="gray.500">{product.hindi}</Text>
+              )}
+              {(product.tagline || product.localName) && (
+                <Text mt={2} fontSize={{ base: 'sm', md: 'md' }} color="gray.700" fontWeight="600">
+                  {product.tagline || product.localName}
+                </Text>
+              )}
+              <Text mt={3} fontSize={{ base: 'sm', md: 'md' }} color="gray.600">
+                {product.short}
+              </Text>
+              <Text mt={3} fontSize={{ base: 'sm', md: 'md' }} color="gray.700" lineHeight="1.6">
+                {product.details}
+              </Text>
+
+              <Box mt={5}>
+                <Text fontWeight="900" mb={3} fontSize="sm" textTransform="uppercase" letterSpacing="0.06em" color="gray.600">
+                  Key benefits
+                </Text>
+                <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)' }} gap={2}>
+                  {product.benefits.map((benefit) => (
+                    <Box key={benefit} borderWidth="1px" borderColor="blackAlpha.100" borderRadius="12px" p={3} bg="white">
+                      <Text fontWeight="700" fontSize="sm">{benefit}</Text>
+                    </Box>
+                  ))}
+                </Grid>
+              </Box>
+
+              {product.useCases && product.useCases.length > 0 && (
+                <Box mt={5}>
+                  <Text fontWeight="900" mb={3} fontSize="sm" textTransform="uppercase" letterSpacing="0.06em" color="gray.600">
+                    Use cases
+                  </Text>
+                  <Flex gap={2} wrap="wrap">
+                    {product.useCases.map((useCase) => (
+                      <Tag key={useCase} size="sm" borderRadius="full" bg="green.50" color="green.900">
+                        {useCase}
+                      </Tag>
+                    ))}
+                  </Flex>
+                </Box>
+              )}
+
+              {product.dosage && (
+                <Box mt={5}>
+                  <Text fontWeight="900" mb={2} fontSize="sm" textTransform="uppercase" letterSpacing="0.06em" color="gray.600">
+                    Dosage
+                  </Text>
+                  <Text fontSize="sm" color="gray.700">{product.dosage}</Text>
+                </Box>
+              )}
+
+              {product.ingredients && product.ingredients.length > 0 && (
+                <Box mt={5}>
+                  <Text fontWeight="900" mb={2} fontSize="sm" textTransform="uppercase" letterSpacing="0.06em" color="gray.600">
+                    Key ingredients
+                  </Text>
+                  <Text fontSize="sm" color="gray.600" lineHeight="1.6">
+                    {product.ingredients.join(' · ')}
+                  </Text>
+                </Box>
+              )}
+
+              <Grid mt={5} templateColumns={{ base: '1fr', sm: 'repeat(3, 1fr)' }} gap={2}>
+                <InfoTile label="Pack" value={product.pack} />
+                <InfoTile label="Form" value={product.form} />
+                <InfoTile label="Price" value={product.price} />
+              </Grid>
             </Box>
           </Grid>
         </ModalBody>
         <ModalFooter gap={2} borderTopWidth="1px" borderColor="blackAlpha.100" flexWrap="wrap" py={3}>
+          <Button as={Link} href={emailHref(`Enquiry for ${product.name}`)} leftIcon={<Mail size={16} />} bg="#103d2b" color="white" flex={{ base: '1 1 100%', sm: '0 0 auto' }} _hover={{ bg: '#0b2c20', textDecoration: 'none' }}>
+            Email
+          </Button>
           <Button as={Link} href={whatsappHref(`Hello Appurva Herbals, I want details for ${product.name}.`)} leftIcon={<MessageCircle size={16} />} bg="#25d366" color="#062b17" flex={{ base: '1 1 100%', sm: '0 0 auto' }} _hover={{ bg: '#21bf5b', textDecoration: 'none' }}>
             WhatsApp
           </Button>
@@ -408,6 +476,15 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
         </ModalFooter>
       </ModalContent>
     </Modal>
+  )
+}
+
+function InfoTile({ label, value }: { label: string; value: string }) {
+  return (
+    <Box bg="white" borderWidth="1px" borderColor="blackAlpha.100" borderRadius="12px" p={3}>
+      <Text fontSize="xs" color="gray.500" fontWeight="900">{label}</Text>
+      <Text mt={1} fontWeight="800" fontSize="sm">{value}</Text>
+    </Box>
   )
 }
 
