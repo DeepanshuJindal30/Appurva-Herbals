@@ -145,7 +145,7 @@ export default function Page() {
               <Box order={{ base: 1, lg: 2 }} display="flex" alignItems="center" justifyContent="center">
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.55, delay: 0.08 }} style={{ width: '100%', maxWidth: 720 }}>
                 <Box w="100%" borderRadius={{ base: '16px', md: '28px' }} overflow="hidden" boxShadow="2xl" bg="white">
-                  <Image src="/landing.png" alt="Appurva Herbals product range" w="100%" h="auto" objectFit="contain" />
+                  <Image src="/landing-2026.png?v=2" alt="Appurva Herbals product range" w="100%" h="auto" objectFit="contain" />
                 </Box>
                 </motion.div>
               </Box>
